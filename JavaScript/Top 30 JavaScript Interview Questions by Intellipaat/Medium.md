@@ -201,9 +201,9 @@ const intervalId = setInterval(() => {
 
 **States Of Promises**
 - A Promise has **three states**:
-  1. Pending : The initial state, where operation is still ongoing.
-  2. Fulfilled : The operation was successful, and the promise has a result.
-  3. Rejected : The operation failed, and the promise has a reason ( error ).
+  1. **Pending**: The initial state, where operation is still ongoing.
+  2. **Fulfilled**: The operation was successful, and the promise has a result.
+  3. **Rejected**: The operation failed, and the promise has a reason ( error ).
 
 **Creating a Promise**
 ```js
@@ -277,6 +277,97 @@ fetchUser()
 ```
 
 ## 8. Use of async and await in JavaScript.
+
+- **async** and **await** are syntactic sugar built on top of **Promises** in JavaScript. They make **asynchronous code look and behave more like synchronous code**, improving readability and structure.
+- **async**:
+  - Used to **declare a function as asynchronous**.
+  - Always **returns a Promise**.
+  - You can use **await** only inside an **async** function.
+
+```js
+async function fetchData() {
+  return "Hello";
+}
+
+fetchData().then(console.log); // Output: Hello
+```
+
+- **await**:
+  - Can only be used **inside** an **async function**.
+  - Pauses the execution of the function **until the Promise is resolved or rejected**.
+  - Makes the code appear synchronous (step-by-step), even though it's asynchronous under the hood.
+
+**Why Use async/await?**
+- Cleaner and more readable than .then() chaining.
+- Easier to write try/catch for error handling.
+- Avoids callback hell and deeply nested .then().
+
+```js
+// Example: Without async/await (Using Promises)
+
+function getUserData() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => resolve("User data fetched!"), 1000);
+  });
+}
+
+getUserData()
+  .then((data) => console.log(data))
+  .catch((err) => console.error(err));
+
+// Same Example With async/await
+
+async function getUserDataAsync() {
+  try {
+    const data = await new Promise((resolve) =>
+      setTimeout(() => resolve("User data fetched!"), 1000)
+    );
+    console.log(data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+getUserDataAsync();
+```
+
+**Using async/await with Fetch API**
+
+```js
+async function fetchUser() {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/users/1");
+    const data = await response.json();
+    console.log("User:", data);
+  } catch (error) {
+    console.error("Failed to fetch user:", error);
+  }
+}
+
+fetchUser();
+```
+
+**Chaining with await**
+
+```js
+async function loadData() {
+  try {
+    const user = await fetch("https://jsonplaceholder.typicode.com/users/1");
+    const userData = await user.json();
+
+    const posts = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userData.id}`);
+    const postsData = await posts.json();
+
+    console.log("User:", userData);
+    console.log("Posts:", postsData);
+  } catch (error) {
+    console.error("Error loading data:", error);
+  }
+}
+
+loadData();
+
+```
 
 ## 9. Difference between call, apply, and bind.
 

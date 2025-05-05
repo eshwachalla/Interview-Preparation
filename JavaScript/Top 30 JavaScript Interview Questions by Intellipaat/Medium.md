@@ -195,10 +195,179 @@ const intervalId = setInterval(() => {
 
 ## 7. Describe promises in JavaScript.
 
-- A **Promise** represents a value that may be available now, later, or never.
-- It has 3 states: **pending, fulfilled, and rejected**
+- A **Promise** in JavaScript is an object that represents the eventual **completion (or failure)** of an asynchronous operation, and its resulting value.
+- A Promise is **used to handle asynchronous operations.**
+- Instead of using nested callbacks (callback hell), Promises allow you to **write cleaner and more maintainable asynchronous code**.
+
+**States Of Promises**
+- A Promise has **three states**:
+  1. **Pending**: The initial state, where operation is still ongoing.
+  2. **Fulfilled**: The operation was successful, and the promise has a result.
+  3. **Rejected**: The operation failed, and the promise has a reason ( error ).
+
+**Creating a Promise**
+```js
+const myPromise = new Promise((resolve, reject) => {
+  // asynchronous operation
+  setTimeout(() => {
+    const success = true;
+    if (success) {
+      resolve("Data fetched successfully!");
+    } else {
+      reject("Error while fetching data");
+    }
+  }, 2000);
+});
+
+// resolve(value) — called when the operation succeeds.
+// reject(error) — called when the operation fails.
+```
+
+**Consuming a Promise**
+- Consuming a promise involves handling its eventual result, whether it resolves successfully or rejects with an error. JavaScript provides the then, catch, and finally methods to manage promises.
+```js
+function fetchData() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const success = true;
+      if (success) {
+        resolve("Data fetched successfully!");
+      } else {
+        reject("Failed to fetch data.");
+      }
+    }, 1000);
+  });
+}
+
+fetchData()
+  .then(data => {
+    console.log("Success:", data);
+  })
+  .catch(error => {
+    console.error("Error:", error);
+  })
+  .finally(() => {
+    console.log("Operation complete.");
+  });
+```
+
+**Explanation**
+- **.then()** : This method is used to handle the resolved value of a promise. It takes up to two arguments:
+  - **onFulfilled**: A function to be executed when the promise is resolved successfully. It receives the resolved value as an argument.
+  - **onRejected**: An optional function to be executed when the promise is rejected. It receives the rejection reason as an argument.
+- **.catch()** : This method is used to handle rejections specifically. It takes one argument:
+  - **onRejected**: A function to be executed when the promise is rejected. It receives the rejection reason as an argument.
+- **.finally()** : This method is used to execute code regardless of whether the promise is resolved or rejected. It takes one argument: 
+  - **onFinally**: A function to be executed after the promise is settled (either resolved or rejected). It does not receive any arguments.
+
+**Why use promises?**
+- Better **readability** than nested callbacks.
+- Easier to chain multiple async tasks using **.then()**.
+- Built-in error handling using **.catch()**.
+
+**Chaining Promises**
+
+```js
+fetchUser()
+  .then((user) => fetchPosts(user.id))
+  .then((posts) => displayPosts(posts))
+  .catch((error) => console.error(error));
+
+// Each .then() returns a new promise, allowing a smooth flow of asynchronous operations.
+```
 
 ## 8. Use of async and await in JavaScript.
+
+- **async** and **await** are syntactic sugar built on top of **Promises** in JavaScript. They make **asynchronous code look and behave more like synchronous code**, improving readability and structure.
+- **async**:
+  - Used to **declare a function as asynchronous**.
+  - Always **returns a Promise**.
+  - You can use **await** only inside an **async** function.
+
+```js
+async function fetchData() {
+  return "Hello";
+}
+
+fetchData().then(console.log); // Output: Hello
+```
+
+- **await**:
+  - Can only be used **inside** an **async function**.
+  - Pauses the execution of the function **until the Promise is resolved or rejected**.
+  - Makes the code appear synchronous (step-by-step), even though it's asynchronous under the hood.
+
+**Why Use async/await?**
+- Cleaner and more readable than .then() chaining.
+- Easier to write try/catch for error handling.
+- Avoids callback hell and deeply nested .then().
+
+```js
+// Example: Without async/await (Using Promises)
+
+function getUserData() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => resolve("User data fetched!"), 1000);
+  });
+}
+
+getUserData()
+  .then((data) => console.log(data))
+  .catch((err) => console.error(err));
+
+// Same Example With async/await
+
+async function getUserDataAsync() {
+  try {
+    const data = await new Promise((resolve) =>
+      setTimeout(() => resolve("User data fetched!"), 1000)
+    );
+    console.log(data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+getUserDataAsync();
+```
+
+**Using async/await with Fetch API**
+
+```js
+async function fetchUser() {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/users/1");
+    const data = await response.json();
+    console.log("User:", data);
+  } catch (error) {
+    console.error("Failed to fetch user:", error);
+  }
+}
+
+fetchUser();
+```
+
+**Chaining with await**
+
+```js
+async function loadData() {
+  try {
+    const user = await fetch("https://jsonplaceholder.typicode.com/users/1");
+    const userData = await user.json();
+
+    const posts = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userData.id}`);
+    const postsData = await posts.json();
+
+    console.log("User:", userData);
+    console.log("Posts:", postsData);
+  } catch (error) {
+    console.error("Error loading data:", error);
+  }
+}
+
+loadData();
+
+```
 
 ## 9. Difference between call, apply, and bind.
 
